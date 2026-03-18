@@ -9,6 +9,8 @@ import { Borrower } from './borrowers/entities/borrower.entity';
 import { BookBorrowersModule } from './book-borrowers/book-borrowers.module';
 import { BookBorrower } from './book-borrowers/entities/book-borrower.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -17,7 +19,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       isGlobal: true, 
       envFilePath: '.env',
     }),
-
+ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: seconds(1),
+        limit: 3, // 3 requests per second
+      },
+      {
+        name: 'long',
+        ttl: seconds(60),
+        limit: 100, // 100 requests per minute
+      },
+    ]),
     // 2. Initialize TypeOrmModule Async
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -43,6 +56,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BookBorrowersModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,{
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard, // Apply globally to all routes
+    },],
 })
 export class AppModule {}

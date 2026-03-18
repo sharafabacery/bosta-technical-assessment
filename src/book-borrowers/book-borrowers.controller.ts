@@ -4,6 +4,7 @@ import { CreateBookBorrowerDto } from './dto/create-book-borrower.dto';
 import { UpdateBookBorrowerDto } from './dto/update-book-borrower.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationQueryDto } from 'src/dto/pagination-query.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('BorrowingProcess')
 @Controller('BorrowingProcess')
@@ -14,6 +15,7 @@ export class BookBorrowersController {
   @ApiOperation({ summary: 'Borrow a book' })
   @ApiResponse({ status: 201, description: 'Book borrowed successfully.' })
   @ApiResponse({ status: 409, description: 'Book out of stock.' })
+  @Throttle({ default: { limit: 1, ttl: 10000 } })
   create(@Body() createBookBorrowerDto: CreateBookBorrowerDto) {
     return this.bookBorrowersService.borrowBook(createBookBorrowerDto);
   }
@@ -21,6 +23,7 @@ export class BookBorrowersController {
   @Get(':id/borrowed-books')
   @ApiOperation({ summary: 'Get all books borrowed by a specific user' })
   @ApiResponse({ status: 200, description: 'Returns a list of books with borrow metadata.' })
+  @Throttle({ default: { limit: 1, ttl: 10000 } })
   findOne(@Param('id') id: number) {
     return this.bookBorrowersService.getBorrowedBooks(+id);
   }
