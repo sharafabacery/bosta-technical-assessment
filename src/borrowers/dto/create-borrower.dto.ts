@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, MaxLength } from "class-validator";
+import { IsEmail, IsInt, IsNotEmpty, MaxLength } from "class-validator";
 
 export class CreateBorrowerDto {
 @ApiPropertyOptional({ minLength: 1, maxLength: 255, description: 'name' })
@@ -10,6 +10,7 @@ export class CreateBorrowerDto {
     @ApiPropertyOptional({ minLength: 1, maxLength: 255, description: 'email' })
     @IsNotEmpty()
     @MaxLength(255)
+    @IsEmail()
     email: string;
 
     @ApiPropertyOptional({ minLength: 1, maxLength: 255, description: 'Registered date' })
