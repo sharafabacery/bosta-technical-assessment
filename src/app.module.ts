@@ -11,9 +11,16 @@ import { BookBorrower } from './book-borrowers/entities/book-borrower.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.register({
+      global: true, // This makes the module available everywhere
+      secret: 'DO-NOT-USE-THIS-SECRET-IN-PRODUCTION',
+      signOptions: { expiresIn: '60s' },
+    }),
     // 1. Initialize ConfigModule
     ConfigModule.forRoot({
       isGlobal: true, 
@@ -53,7 +60,7 @@ ThrottlerModule.forRoot([
     // 3. Feature Modules
     BooksModule, 
     BorrowersModule, 
-    BookBorrowersModule
+    BookBorrowersModule, AuthModule
   ],
   controllers: [AppController],
   providers: [AppService,{
