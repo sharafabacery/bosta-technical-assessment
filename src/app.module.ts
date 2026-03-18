@@ -8,20 +8,40 @@ import { BorrowersModule } from './borrowers/borrowers.module';
 import { Borrower } from './borrowers/entities/borrower.entity';
 import { BookBorrowersModule } from './book-borrowers/book-borrowers.module';
 import { BookBorrower } from './book-borrowers/entities/book-borrower.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-      type: 'postgres', // or 'mssql' for SQL Server
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '123456',
-      database: 'bosta-technical-assessment',
-      entities: [Book,Borrower,BookBorrower], 
-      synchronize: true, 
-      migrations: [__dirname + '/migrations/*.js'],
-      migrationsRun: true, // This is the "automatic" trigger on startup
-    }),BooksModule, BorrowersModule, BookBorrowersModule],
+  imports: [
+    // 1. Initialize ConfigModule
+    ConfigModule.forRoot({
+      isGlobal: true, 
+      envFilePath: '.env',
+    }),
+
+    // 2. Initialize TypeOrmModule Async
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST'),
+        port: config.get<number>('DB_PORT'),
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
+        entities: [Book, Borrower, BookBorrower],
+        
+        // Safety settings
+        synchronize: config.get<string>('NODE_ENV') === 'development', 
+        migrations: [__dirname + '/migrations/*.js'],
+        migrationsRun: true,
+      }),
+    }),
+
+    // 3. Feature Modules
+    BooksModule, 
+    BorrowersModule, 
+    BookBorrowersModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
