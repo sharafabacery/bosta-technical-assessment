@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BooksModule } from './books/books.module';
 import { Book } from './books/entities/book.entity';
+import { BorrowersModule } from './borrowers/borrowers.module';
+import { Borrower } from './borrowers/entities/borrower.entity';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -13,11 +15,11 @@ import { Book } from './books/entities/book.entity';
       username: 'postgres',
       password: '123456',
       database: 'bosta-technical-assessment',
-      entities: [Book], 
+      entities: [Book,Borrower], 
       synchronize: true, 
       migrations: [__dirname + '/migrations/*.js'],
       migrationsRun: true, // This is the "automatic" trigger on startup
-    }),BooksModule],
+    }),BooksModule, BorrowersModule],
   controllers: [AppController],
   providers: [AppService],
 })

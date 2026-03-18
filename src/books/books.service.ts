@@ -28,7 +28,6 @@ export class BooksService {
 
   async findAll(searchDto: BookSearchDto) {
     const { page=1, limit=10,title,isbn,author } = searchDto;
-    const skip = (page - 1) * limit;
 
    const qb = this.booksRepository.createQueryBuilder('book');
 
