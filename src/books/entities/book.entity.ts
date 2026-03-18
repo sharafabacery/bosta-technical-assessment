@@ -1,5 +1,6 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, Unique, Index } from 'typeorm';
+import { BookBorrower } from 'src/book-borrowers/entities/book-borrower.entity';
+import { Entity, Column, PrimaryGeneratedColumn, Unique, Index, OneToMany } from 'typeorm';
 
 @Entity()
 export class Book {
@@ -28,4 +29,6 @@ export class Book {
     length: 255, 
     nullable: false})
   shelf: string;
+  @OneToMany(() => BookBorrower, (bb) => bb.book)
+  bookBorrowers: BookBorrower[];
 }

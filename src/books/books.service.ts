@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
@@ -7,7 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from 'src/dto/pagination-query.dto';
 import { BookSearchDto } from './dto/search-book.dto';
 import { ILike } from 'typeorm';
-
+import { BookBorrower } from 'src/book-borrowers/entities/book-borrower.entity';
+const escapeLike = (str: string) => str.replace(/[%_]/g, '\\$&');
 @Injectable()
 export class BooksService {
   constructor(
@@ -34,12 +35,12 @@ export class BooksService {
 		// Apply filters
 		if (title) {
 			qb.andWhere('LOWER(book.title) LIKE LOWER(:title)', {
-				title: `%${title}%`,
+				title: `%${escapeLike(title)}%`,
 			});
 		}
 		if (author) {
 			qb.andWhere('LOWER(book.author) LIKE LOWER(:author)', {
-				author: `%${author}%`,
+				author: `%${escapeLike(author)}%`,
 			});
 		}
 		if (isbn) {
@@ -70,9 +71,41 @@ export class BooksService {
 		return book;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return this.booksRepository.update({ id }, updateBookDto);
-  }
+  async update(id: number, updateBookDto: UpdateBookDto) {
+  return await this.booksRepository.manager.transaction(async (transactionalEntityManager) => {
+    // 1. Fetch the current state of the book
+    const book = await transactionalEntityManager.findOne(Book, {
+      where: { id },
+      relations: ['bookBorrowers'], // Ensure we can see the relations
+    });
+
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    // 2. If the user is trying to update the quantity
+    if (updateBookDto.quantity !== undefined) {
+      // Count "Active" borrowings (where returnedAt is null)
+      const activeBorrowsCount = await transactionalEntityManager.count(BookBorrower, {
+        where: {
+          book: { id },
+          isReturned: false
+        },
+      });
+
+      // 3. Prevent decrease below the number of books currently out
+      if (updateBookDto.quantity < activeBorrowsCount) {
+        throw new BadRequestException(
+          `Cannot decrease quantity to ${updateBookDto.quantity}. ` +
+          `There are currently ${activeBorrowsCount} copies out with borrowers.`
+        );
+      }
+    }
+
+    // 4. Perform the update
+    return await transactionalEntityManager.update(Book, id, updateBookDto);
+  });
+}
 
   async remove(id: number): Promise<void> {
     const { affected } = await this.booksRepository.delete({ id });

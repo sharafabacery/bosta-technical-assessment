@@ -29,7 +29,7 @@ export class BorrowersController {
   @ApiResponse({ status: 200, description: 'Return the requested borrower.' })
   @ApiResponse({ status: 404, description: 'Borrower not found.' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.borrowersService.findOne(+id);
   }
 
@@ -37,7 +37,7 @@ export class BorrowersController {
   @ApiResponse({ status: 200, description: 'Borrower updated successfully.' })
   @ApiResponse({ status: 404, description: 'Borrower not found.' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBorrowerDto: UpdateBorrowerDto) {
+  update(@Param('id') id: number, @Body() updateBorrowerDto: UpdateBorrowerDto) {
     return this.borrowersService.update(+id, updateBorrowerDto);
   }
   
@@ -45,7 +45,7 @@ export class BorrowersController {
   @ApiResponse({ status: 200, description: 'Borrower deleted successfully.' })
   @ApiResponse({ status: 404, description: 'Borrower not found' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.borrowersService.remove(+id);
   }
 }

@@ -1,5 +1,6 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, Unique, Index } from 'typeorm';
+import { BookBorrower } from 'src/book-borrowers/entities/book-borrower.entity';
+import { Entity, Column, PrimaryGeneratedColumn, Unique, Index, OneToMany } from 'typeorm';
 
 @Entity()
 export class Borrower {
@@ -20,5 +21,8 @@ export class Borrower {
   @Column({type: 'date', 
     nullable: false})
   registered: Date;
+  
+  @OneToMany(() => BookBorrower, (bb) => bb.borrower)
+  bookBorrowers: BookBorrower[];
   
 }
