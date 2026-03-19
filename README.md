@@ -44,14 +44,17 @@ A robust, scalable backend API for managing a library's catalog, members, and tr
 #### Environment Setup
 Create a `.env` file in the root directory and configure your variables:
 ```env
-PORT=3000
+# Database Configuration
+DB_TYPE=postgres
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
-DB_PASSWORD=yourpassword
-DB_NAME=library_db
-THROTTLE_TTL=60
-THROTTLE_LIMIT=10
+DB_PASSWORD=123456
+DB_NAME=bosta-technical-assessment
+
+# Application Configuration
+PORT=3000
+NODE_ENV=development
 ```
 
 ---
