@@ -119,7 +119,7 @@ src/
 
 The system uses a relational schema to manage the relationships between books, borrowers, and the tracking of borrowed items.
 
-
+![Alt text](/erd.png)   
 
 **Relationship Logic:**
 * **Book ↔ BookBorrower**: One-to-Many. A book can be involved in multiple borrowing transactions over time.
@@ -127,11 +127,3 @@ The system uses a relational schema to manage the relationships between books, b
 * **BookBorrower**: Acts as a join table (Many-to-Many) that tracks specific metadata like `borrowedAt`, `returnedAt`, and `overdue` status.
 
 ---
-
-### 💡 Pro-Tip for your README
-Since you are using **TypeORM**, you can keep this documentation in sync by:
-1.  **Exporting the image**: Save the ERD I generated as `erd.png`.
-2.  **Referencing it**: Use the markdown syntax `![Database Schema](./erd.png)`.
-3.  **Entity Updates**: Remember to update this diagram if you add new columns (like `category` or `fineAmount`) to your TypeORM entities.
-
-Would you like me to generate the **Swagger/OpenAPI** configuration code to match these entities so your interactive docs are fully set up?
