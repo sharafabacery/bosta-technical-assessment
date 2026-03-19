@@ -20,7 +20,7 @@ import { ReportModule } from './report/report.module';
     JwtModule.register({
       global: true, // This makes the module available everywhere
       secret: 'DO-NOT-USE-THIS-SECRET-IN-PRODUCTION',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '60m' },
     }),
     // 1. Initialize ConfigModule
     ConfigModule.forRoot({
@@ -63,7 +63,6 @@ ThrottlerModule.forRoot([
     BorrowersModule, 
     BookBorrowersModule, AuthModule, ReportModule
   ],
-  controllers: [AppController],
   providers: [AppService,{
       provide: APP_GUARD,
       useClass: ThrottlerGuard, // Apply globally to all routes
