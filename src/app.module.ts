@@ -13,6 +13,7 @@ import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -60,7 +61,7 @@ ThrottlerModule.forRoot([
     // 3. Feature Modules
     BooksModule, 
     BorrowersModule, 
-    BookBorrowersModule, AuthModule
+    BookBorrowersModule, AuthModule, ReportModule
   ],
   controllers: [AppController],
   providers: [AppService,{
