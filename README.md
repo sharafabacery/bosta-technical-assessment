@@ -56,7 +56,10 @@ DB_NAME=bosta-technical-assessment
 PORT=3000
 NODE_ENV=development
 ```
-
+3. Run App:
+   ```bash
+   npm run start
+   ```
 ---
 
 ### 🐳 Docker Deployment
