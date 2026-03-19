@@ -70,8 +70,13 @@ The app will be accessible at `http://localhost:3000`.
 ### 🛡 Security & Usage
 
 #### Basic Authentication
-Most administrative endpoints require Basic Auth. 
-* **Header**: `Authorization: Basic <base64-encoded-credentials>`
+Most administrative endpoints require Brearer Auth. 
+* **Header**: `Authorization: Brearer <base64-encoded-credentials>`
+Credinatils of login is 
+```bash
+username: 'admin',
+password: 'password123',
+```
 
 #### Rate Limiting
 To ensure stability, the API is limited to **10 requests per 60 seconds** per IP address (customizable in `.env`).
